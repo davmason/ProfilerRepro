@@ -1,22 +1,36 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tracing;
-using Microsoft.Diagnostics.Tracing.Etlx;
 
 namespace SampleApp
 {
+    internal class MyEventListener: EventListener
+    {
+        public static long s_currentKeyword;
+
+        protected override void OnEventSourceCreated(EventSource eventSource)
+        {
+            base.OnEventSourceCreated(eventSource);
+
+            if (eventSource.Name.Equals("TestEventSource"))
+            {
+                EnableEvents(eventSource, EventLevel.Verbose, (EventKeywords)s_currentKeyword);
+            }
+        }
+
+        protected override void OnEventWritten(EventWrittenEventArgs eventData)
+        {
+            base.OnEventWritten(eventData);
+
+            Console.WriteLine($"EventListener event name={eventData.EventName} keywords=0x{eventData.Keywords:X} m_currentKeyword=0x{s_currentKeyword:X}");
+        }
+    }
+
     internal class Program
     {
         static ManualResetEvent s_event = new ManualResetEvent(false);
@@ -36,8 +50,10 @@ namespace SampleApp
             };
 
             int totalEvents = 0;
+            MyEventListener.s_currentKeyword = currentKeyword;
             using (EventPipeSession session = client.StartEventPipeSession(providers, false))
             using (TestEventSource eventSource = new TestEventSource())
+            using (MyEventListener listener = new MyEventListener())
             {
                 eventSource.Event1();
                 eventSource.Event2();
