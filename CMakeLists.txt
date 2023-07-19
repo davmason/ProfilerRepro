@@ -4,7 +4,7 @@ project(CorProfiler)
 
 if(NOT WIN32)
     set(BASE_SOURCES )
-    add_compile_options(-Wno-invalid-noreturn -Wno-pragma-pack -Wno-int-to-pointer-cast -fPIC -fms-extensions -DBIT64 -DPAL_STDCPP_COMPAT -DPLATFORM_UNIX -DHOST_64BIT -std=c++17)
+    add_compile_options(-Wno-invalid-noreturn -Wno-pragma-pack -Wno-int-to-pointer-cast -fPIC -fms-extensions -DBIT64 -DPAL_STDCPP_COMPAT -DPLATFORM_UNIX -DHOST_64BIT -DHOST_AMD64 -std=c++17)
     add_link_options(--no-undefined -pthread)
 
     include_directories($ENV{CORECLR_PATH}/pal/inc/rt $ENV{CORECLR_PATH}/pal/inc $ENV{CORECLR_PATH}/inc)
