@@ -18,8 +18,6 @@
 #include <map>
 #include "cor.h"
 #include "corprof.h"
-#include "eventpipemetadatareader.h"
-#include "eventpipeeventprinter.h"
 #include "profilerstring.h"
 
 #define SHORT_LENGTH    32
@@ -109,11 +107,6 @@ class CorProfiler : public ICorProfilerCallback10
 {
 private:
     ICorProfilerInfo12 *_pCorProfilerInfo12;
-    EVENTPIPE_SESSION _session;
-    EVENTPIPE_PROVIDER _provider;
-    EVENTPIPE_EVENT _allTypesEvent;
-    ThreadSafeMap<EVENTPIPE_PROVIDER, String> _providerNameCache;
-    ThreadSafeMap<LPCBYTE, EventPipeMetadataInstance> _metadataCache;
     std::atomic<int> _refCount;
 
 public:
@@ -273,21 +266,4 @@ public:
     }
 
 private:
-    // The following are helper methods
-    HRESULT DefineEvent();
-    HRESULT WriteEvent();
-    HRESULT StartSession();
-
-    String GetOrAddProviderName(EVENTPIPE_PROVIDER provider);
-    String GetOrAddProviderNameNoLock(EVENTPIPE_PROVIDER provider);
-    EventPipeMetadataInstance GetOrAddMetadata(LPCBYTE pMetadata, ULONG cbMetadata);
-
-    template<typename T>
-    static void WriteToBuffer(BYTE *pBuffer, size_t bufferLength, size_t *pOffset, T value)
-    {
-        _ASSERTE(bufferLength >= (*pOffset + sizeof(T)));
-
-        *(T*)(pBuffer + *pOffset) = value;
-        *pOffset += sizeof(T);
-    }
 };
