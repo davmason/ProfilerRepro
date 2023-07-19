@@ -106,7 +106,7 @@ class ThreadSafeMap
 class CorProfiler : public ICorProfilerCallback10
 {
 private:
-    ICorProfilerInfo12 *_pCorProfilerInfo12;
+    ICorProfilerInfo12 *_pCorProfilerInfo;
     std::atomic<int> _refCount;
 
 public:
@@ -136,7 +136,7 @@ public:
     HRESULT STDMETHODCALLTYPE ClassUnloadStarted(ClassID classId) override { return S_OK; }
     HRESULT STDMETHODCALLTYPE ClassUnloadFinished(ClassID classId, HRESULT hrStatus) override { return S_OK; }
     HRESULT STDMETHODCALLTYPE FunctionUnloadStarted(FunctionID functionId) override { return S_OK; }
-    HRESULT STDMETHODCALLTYPE JITCompilationStarted(FunctionID functionId, BOOL fIsSafeToBlock) override { return S_OK; }
+    HRESULT STDMETHODCALLTYPE JITCompilationStarted(FunctionID functionId, BOOL fIsSafeToBlock) override;
     HRESULT STDMETHODCALLTYPE JITCompilationFinished(FunctionID functionId, HRESULT hrStatus, BOOL fIsSafeToBlock) override { return S_OK; }
     HRESULT STDMETHODCALLTYPE JITCachedFunctionSearchStarted(FunctionID functionId, BOOL* pbUseCachedFunction) override { return S_OK; }
     HRESULT STDMETHODCALLTYPE JITCachedFunctionSearchFinished(FunctionID functionId, COR_PRF_JIT_CACHE result) override { return S_OK; }
@@ -221,9 +221,9 @@ public:
         LPCGUID pRelatedActivityId,
         ThreadID eventThread,
         ULONG numStackFrames,
-        UINT_PTR stackFrames[]) override;
+        UINT_PTR stackFrames[]) override { return S_OK; }
 
-    HRESULT STDMETHODCALLTYPE EventPipeProviderCreated(EVENTPIPE_PROVIDER provider) override;
+    HRESULT STDMETHODCALLTYPE EventPipeProviderCreated(EVENTPIPE_PROVIDER provider) override { return S_OK; }
 
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) override
     {
@@ -266,4 +266,6 @@ public:
     }
 
 private:
+    String GetClassIDName(ClassID classId);
+    String GetFunctionIDName(FunctionID funcId);
 };

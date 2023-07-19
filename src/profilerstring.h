@@ -197,6 +197,11 @@ public:
         return *this;
     }
 
+    operator std::wstring() const
+    {
+        return ToWString();
+    }
+
     WCHAR& operator[] (size_t pos)
     {
         return buffer[pos];
@@ -250,7 +255,7 @@ public:
         return printBuffer;
     }
 
-    std::wstring ToWString()
+    std::wstring ToWString() const
     {
         std::wstring temp;
         for (size_t i = 0; i < bufferLen; ++i)

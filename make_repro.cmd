@@ -43,4 +43,7 @@ if ["%~1"]==[""] (
 echo Copying coreclr from %1*
 xcopy /y /e /u /q %1* .
 
+echo Copying CorProfiler.dll
+copy /y ..\CorProfiler.dll .
+
 popd
