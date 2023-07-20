@@ -8,7 +8,7 @@
 #define NOMINMAX
 
 #ifndef WIN32
-#include "unix/profiler_defines.h"
+#include "linux/profiler_defines.h"
 #else // !WIN32
 #include "windows/profiler_defines.h"
 #endif // !WIN32
