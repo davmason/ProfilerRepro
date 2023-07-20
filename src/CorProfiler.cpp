@@ -21,11 +21,18 @@ using std::thread;
 using std::wstring;
 using std::wcout;
 
+CorProfiler *CorProfiler::s_instance = nullptr;
+
+static void EnterHook(FunctionIDOrClientID functionIDOrClientID, COR_PRF_ELT_INFO eltInfo)
+{
+    CorProfiler::GetInstance()->EnterHook(functionIDOrClientID, eltInfo);
+}
+
 CorProfiler::CorProfiler() :
     _pCorProfilerInfo(),
     _refCount(0)
 {
-    setlocale(LC_ALL, "");
+
 }
 
 CorProfiler::~CorProfiler()
@@ -48,13 +55,21 @@ HRESULT STDMETHODCALLTYPE CorProfiler::Initialize(IUnknown *pICorProfilerInfoUnk
         return hr;
     }
 
-    if (FAILED(hr = _pCorProfilerInfo->SetEventMask2(COR_PRF_MONITOR_JIT_COMPILATION,
+    if (FAILED(hr = _pCorProfilerInfo->SetEventMask2(COR_PRF_MONITOR_JIT_COMPILATION
+                                                     | COR_PRF_MONITOR_ENTERLEAVE
+                                                     | COR_PRF_ENABLE_FRAME_INFO,
                                                        0)))
     {
         wcout << L"FAIL: ICorProfilerInfo::SetEventMask2() failed hr=0x" << std::hex << hr << std::endl;
         return hr;
     }
     
+    if (FAILED(hr = _pCorProfilerInfo->SetEnterLeaveFunctionHooks3WithInfo(::EnterHook, NULL, NULL)))
+    {
+        wcout << L"FAIL: SetEnterLeaveFunctionHooks3WithInfo hr=0x" << std::hex << hr << std::endl;
+        return hr;
+    }
+
     return S_OK;
 }
 
@@ -65,18 +80,18 @@ HRESULT STDMETHODCALLTYPE CorProfiler::Shutdown()
 
 HRESULT CorProfiler::JITCompilationStarted(FunctionID functionId, BOOL fIsSafeToBlock)
 {
-    String profName = GetFunctionIDName(functionId);
-    wstring name = profName.ToWString();
-    if (name.find(L"GenericMethod") != wstring::npos)
-    {
-        wcout << L"    Profiler saw " << name << std::endl;
-    }
+    // String profName = GetFunctionIDName(functionId);
+    // wstring name = profName.ToWString();
+    // if (name.find(L"GenericMethod") != wstring::npos)
+    // {
+    //     wcout << L"    Profiler saw " << name << std::endl;
+    // }
 
     return S_OK;
 }
 
 
-String CorProfiler::GetFunctionIDName(FunctionID funcId)
+String CorProfiler::GetFunctionIDName(FunctionID funcId, COR_PRF_FRAME_INFO frameInfo)
 {
     // If the FunctionID is 0, we could be dealing with a native function.
     if (funcId == 0)
@@ -91,7 +106,6 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
     mdToken token = NULL;
     ULONG32 nTypeArgs = NULL;
     ClassID typeArgs[SHORT_LENGTH];
-    COR_PRF_FRAME_INFO frameInfo = NULL;
 
     HRESULT hr = S_OK;
     hr = _pCorProfilerInfo->GetFunctionInfo2(funcId,
@@ -319,4 +333,32 @@ String CorProfiler::GetClassIDName(ClassID classId)
     name += WCHAR(">");
 
     return name;
+}
+
+void CorProfiler::EnterHook(FunctionIDOrClientID functionIDOrClientID, COR_PRF_ELT_INFO eltInfo)
+{    
+        // virtual HRESULT STDMETHODCALLTYPE GetFunctionEnter3Info( 
+        //     /* [in] */ FunctionID functionId,
+        //     /* [in] */ COR_PRF_ELT_INFO eltInfo,
+        //     /* [out] */ COR_PRF_FRAME_INFO *pFrameInfo,
+        //     /* [out][in] */ ULONG *pcbArgumentInfo,
+        //     /* [size_is][out] */ COR_PRF_FUNCTION_ARGUMENT_INFO *pArgumentInfo) = 0;
+    COR_PRF_FRAME_INFO frameInfo = NULL;
+    HRESULT hr = _pCorProfilerInfo->GetFunctionEnter3Info(functionIDOrClientID.functionID,
+                                                          eltInfo,
+                                                          &frameInfo,
+                                                          NULL,
+                                                          NULL);
+    if (FAILED(hr))
+    {
+        wcout << L"GetFunctionEnter3Info failed hr=0x" << std::hex << hr << std::endl;
+        return;
+    }
+
+    String profName = GetFunctionIDName(functionIDOrClientID.functionID, frameInfo);
+    wstring name = profName.ToWString();
+    if (name.find(L"GenericMethod") != wstring::npos)
+    {
+        wcout << L"    Profiler saw " << name << std::endl;
+    }
 }

@@ -108,10 +108,15 @@ class ThreadSafeMap
 class CorProfiler : public ICorProfilerCallback10
 {
 private:
+    static CorProfiler *s_instance;
     ICorProfilerInfo12 *_pCorProfilerInfo;
     std::atomic<int> _refCount;
 
 public:
+    static CorProfiler *GetInstance()
+    {
+        return s_instance;
+    }
 
     CorProfiler();
     virtual ~CorProfiler();
@@ -267,7 +272,9 @@ public:
         return count;
     }
 
+    void EnterHook(FunctionIDOrClientID functionIDOrClientID, COR_PRF_ELT_INFO eltInfo);
+
 private:
     String GetClassIDName(ClassID classId);
-    String GetFunctionIDName(FunctionID funcId);
+    String GetFunctionIDName(FunctionID funcId, COR_PRF_FRAME_INFO frameInfo);
 };
