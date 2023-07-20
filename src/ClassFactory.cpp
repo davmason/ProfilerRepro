@@ -46,7 +46,7 @@ HRESULT STDMETHODCALLTYPE ClassFactory::CreateInstance(IUnknown *pUnkOuter, REFI
     if (pUnkOuter != nullptr)
     {
         *ppvObject = nullptr;
-        return CLASS_E_NOAGGREGATION;
+        return E_FAIL;
     }
 
     CorProfiler* profiler = new CorProfiler();
