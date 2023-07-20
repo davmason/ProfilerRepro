@@ -301,7 +301,7 @@ String CorProfiler::GetClassIDName(ClassID classId)
                 name += paramName;
                 if (currentParam < genericParamsCount - 1)
                 {
-                    name += ",";
+                    name += WCHAR(",");
                 }
             }
             else
