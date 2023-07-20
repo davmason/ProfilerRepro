@@ -5,7 +5,7 @@ echo "Building test app (sampleapp.dll)"
 
 pushd sampleapp
 dotnet build -c release
-dotnet publish -r linux-x64 -c release
+dotnet publish -r linux-x64 -c release --self-contained
 popd
 
 echo ""
