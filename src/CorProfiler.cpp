@@ -63,6 +63,7 @@ HRESULT STDMETHODCALLTYPE CorProfiler::Shutdown()
 
 HRESULT CorProfiler::JITCompilationStarted(FunctionID functionId, BOOL fIsSafeToBlock)
 {
+    printf("CorProfiler::JITCompilationStarted\n");
     String profName = GetFunctionIDName(functionId);
     wstring name = profName.ToWString();
     if (name.find(L"GenericMethod") != wstring::npos)
