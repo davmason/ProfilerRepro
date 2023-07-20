@@ -63,9 +63,9 @@ HRESULT STDMETHODCALLTYPE CorProfiler::Shutdown()
 
 HRESULT CorProfiler::JITCompilationStarted(FunctionID functionId, BOOL fIsSafeToBlock)
 {
-    printf("CorProfiler::JITCompilationStarted\n");
     String profName = GetFunctionIDName(functionId);
     wstring name = profName.ToWString();
+    wprintf(L"CorProfiler::JITCompilationStarted for %s\n", name.c_str());
     if (name.find(L"GenericMethod") != wstring::npos)
     {
         wprintf(L"%s\n", name.c_str());
@@ -161,7 +161,7 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
     hr = pIMDImport->EnumGenericParams(&hEnum, token, genericParams, MaxGenericParametersCount, &genericParamsCount);
 
     name += WCHAR(" EnumGenericParams<");
-    if (SUCCEEDED(hr))
+    if (hr == S_OK)
     {
         WCHAR paramName[64];
         ULONG paramNameLen = 64;
