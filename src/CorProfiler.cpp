@@ -19,6 +19,7 @@ using std::lock_guard;
 using std::map;
 using std::thread;
 using std::wstring;
+using std::wcout;
 
 CorProfiler::CorProfiler() :
     _pCorProfilerInfo(),
@@ -38,19 +39,19 @@ CorProfiler::~CorProfiler()
 
 HRESULT STDMETHODCALLTYPE CorProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 {
-    wprintf(L"CorProfiler::Initialize\n");
+    wcout << L"CorProfiler::Initialize" << std::endl;
 
     HRESULT hr = S_OK;
     if (FAILED(hr = pICorProfilerInfoUnk->QueryInterface(__uuidof(ICorProfilerInfo12), (void **)&_pCorProfilerInfo)))
     {
-        wprintf(L"FAIL: failed to QI for ICorProfilerInfo12.\n");
+        wcout << L"FAIL: failed to QI for ICorProfilerInfo12." << std::endl;
         return hr;
     }
 
     if (FAILED(hr = _pCorProfilerInfo->SetEventMask2(COR_PRF_MONITOR_JIT_COMPILATION,
                                                        0)))
     {
-        wprintf(L"FAIL: ICorProfilerInfo::SetEventMask2() failed hr=0x%x\n", hr);
+        wcout << L"FAIL: ICorProfilerInfo::SetEventMask2() failed hr=0x" << std::hex << hr << std::endl;
         return hr;
     }
     
@@ -68,7 +69,7 @@ HRESULT CorProfiler::JITCompilationStarted(FunctionID functionId, BOOL fIsSafeTo
     wstring name = profName.ToWString();
     if (name.find(L"GenericMethod") != wstring::npos)
     {
-        wprintf(L"Yo %s\n", name.c_str());
+        wcout << name << std::endl;
     }
 
     return S_OK;
@@ -103,7 +104,7 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
                                             typeArgs);
     if (FAILED(hr))
     {
-        wprintf(L"FAIL: GetFunctionInfo2 call failed with hr=0x%x\n", hr);
+        wcout << L"FAIL: GetFunctionInfo2 call failed with hr=0x" << std::hex << hr << std::endl;
         return WCHAR("FuncNameLookupFailed");
     }
 
@@ -114,7 +115,7 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
                                              (IUnknown **)&pIMDImport);
     if (FAILED(hr))
     {
-        wprintf(L"FAIL: GetModuleMetaData call failed with hr=0x%x\n", hr);
+        wcout << L"FAIL: GetModuleMetaData call failed with hr=0x" << std::hex << hr << std::endl;
         return WCHAR("FuncNameLookupFailed");
     }
 
@@ -131,7 +132,7 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
                                     NULL);
     if (FAILED(hr))
     {
-        wprintf(L"FAIL: GetMethodProps call failed with hr=0x%x", hr);
+        wcout << L"FAIL: GetMethodProps call failed with hr=0x" << std::hex << hr << std::endl;
         return WCHAR("FuncNameLookupFailed");
     }
 
@@ -200,7 +201,7 @@ String CorProfiler::GetClassIDName(ClassID classId)
 
     if (classId == NULL)
     {
-        wprintf(L"FAIL: Null ClassID passed in\n");
+        wcout << L"FAIL: Null ClassID passed in" << std::endl;
         return WCHAR("");
     }
 
@@ -228,7 +229,7 @@ String CorProfiler::GetClassIDName(ClassID classId)
     }
     else if (FAILED(hr))
     {
-        wprintf(L"FAIL: GetClassIDInfo returned 0x%x for ClassID %x\n", hr, (unsigned int)classId);
+        wcout << L"FAIL: GetClassIDInfo returned 0x" << std::hex << hr << L"for ClassID 0x" << std::hex << classId << std::endl;
         return WCHAR("GetClassIDNameFailed");
     }
 
@@ -239,7 +240,7 @@ String CorProfiler::GetClassIDName(ClassID classId)
                                              (IUnknown **)&pMDImport );
     if (FAILED(hr))
     {
-        wprintf(L"FAIL: GetModuleMetaData call failed with hr=0x%x\n", hr);
+        wcout << L"FAIL: GetModuleMetaData call failed with hr=0x" << std::hex << hr << std::endl;
         return WCHAR("ClassIDLookupFailed");
     }
 
@@ -253,7 +254,7 @@ String CorProfiler::GetClassIDName(ClassID classId)
                                          NULL);
     if (FAILED(hr))
     {
-        wprintf(L"FAIL: GetModuleMetaData call failed with hr=0x%x\n", hr);
+        wcout << L"FAIL: GetModuleMetaData call failed with hr=0x" << std::hex << hr << std::endl;
         return WCHAR("ClassIDLookupFailed");
     }
 
