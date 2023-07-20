@@ -6,6 +6,8 @@
 
 #define NOMINMAX
 
+#include "profilercommon.h"
+
 #include <atomic>
 #include <memory>
 #include <set>

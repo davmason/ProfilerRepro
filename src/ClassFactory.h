@@ -5,7 +5,7 @@
 
 #define NOMINMAX
 
-#include "unknwn.h"
+#include "profilercommon.h"
 #include <atomic>
 
 class ClassFactory : public IClassFactory
