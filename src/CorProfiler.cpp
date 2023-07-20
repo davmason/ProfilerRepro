@@ -285,7 +285,7 @@ String CorProfiler::GetClassIDName(ClassID classId)
     mdGenericParam genericParams[MaxGenericParametersCount];
     hr = pMDImport->EnumGenericParams(&hEnum, classToken, genericParams, MaxGenericParametersCount, &genericParamsCount);
 
-    name += WCHAR(" EnumGenericParams<");
+    name += WCHAR("<");
     if (hr == S_OK)
     {
         WCHAR paramName[64];
