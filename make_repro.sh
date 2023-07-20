@@ -1,9 +1,9 @@
 #!/bin/bash
 
 echo ""
-echo "Building test app (multithreadedapp.dll)"
+echo "Building test app (sampleapp.dll)"
 
-pushd multithreadedapp
+pushd sampleapp
 dotnet build -c release
 dotnet publish -r linux-x64 -c release
 popd
@@ -34,12 +34,12 @@ cp ../libCorProfiler.so .
 
 echo ""
 echo "Copying published files to runtime folder"
-cp -R ../multithreadedapp/bin/release/netcoreapp3.1/linux-x64/* runtime/
+cp -R ../sampleapp/bin/release/net7.0/linux-x64/* runtime/
 
 echo ""
 echo "Copying app files to repro folder"
-cp -R ../multithreadedapp/bin/release/netcoreapp3.1/*.dll .
-cp -R ../multithreadedapp/bin/release/netcoreapp3.1/*.pdb .
+cp -R ../sampleapp/bin/release/net7.0/*.dll .
+cp -R ../sampleapp/bin/release/net7.0/*.pdb .
 
 if [ -z "$1" ]; then
     echo "Did not pass a path to a coreclr repo, skipping copying private bits"
