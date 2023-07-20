@@ -64,7 +64,7 @@ HRESULT STDMETHODCALLTYPE CorProfiler::Shutdown()
 HRESULT CorProfiler::JITCompilationStarted(FunctionID functionId, BOOL fIsSafeToBlock)
 {
     printf("1");
-    String name = GetFunctionIDName(functionId);
+    String profName = GetFunctionIDName(functionId);
     printf("2");
     wstring name = profName.ToWString();
     wprintf(L"CorProfiler::JITCompilationStarted for %s\n", name.c_str());
