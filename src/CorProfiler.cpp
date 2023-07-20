@@ -108,8 +108,11 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
         return WCHAR("FuncNameLookupFailed");
     }
 
-    name += GetClassIDName(classId);
-    name += WCHAR(".");
+    if (classId != 0)
+    {
+        name += GetClassIDName(classId);
+        name += WCHAR(".");
+    }
 
     COMPtrHolder<IMetaDataImport2> pMDImport;
     hr = _pCorProfilerInfo->GetModuleMetaData(moduleId,
