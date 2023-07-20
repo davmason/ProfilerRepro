@@ -1,26 +1,6 @@
 @echo off
 setlocal
 
-if not defined BuildOS (
-    set BuildOS=Windows
-)
-
-if not defined BuildArch (
-    set BuildArch=x64
-)
-
-if not defined BuildType (
-    set BuildType=Debug
-)
-
-if not defined CORECLR_PATH (
-    set CORECLR_PATH=D:/git/runtime/src/coreclr
-)
-
-if not defined CORECLR_BIN (
-    set CORECLR_BIN=D:/git/runtime/artifacts/bin/coreclr/%BuildOS%.%BuildArch%.%BuildType%
-)
-
 set VS_ENT_CMD_PATH="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat"
 set VS_COM_CMD_PATH="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"
 
@@ -34,12 +14,6 @@ if not defined VS_CMD_PATH (
         goto :EOF
     )
 )
-
-echo   CORECLR_PATH : %CORECLR_PATH%
-echo   BuildOS      : %BuildOS%
-echo   BuildArch    : %BuildArch%
-echo   BuildType    : %BuildType%
-echo   VS PATH      : %VS_CMD_PATH%
 
 echo   Building
 
