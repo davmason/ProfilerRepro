@@ -64,15 +64,8 @@ HRESULT STDMETHODCALLTYPE CorProfiler::Shutdown()
 
 HRESULT CorProfiler::JITCompilationStarted(FunctionID functionId, BOOL fIsSafeToBlock)
 {
-    wprintf(L"1\n");
     String profName = GetFunctionIDName(functionId);
-    wprintf(L"2\n");
     wstring name = profName.ToWString();
-    wprintf(L"2\n");
-    wprintf(L"2w\n");
-    wprintf(L"CorProfiler::JITCompilationStarted for %s\n", name.c_str());
-    wprintf(L"3\n");
-    wprintf(L"3w\n");
     if (name.find(L"GenericMethod") != wstring::npos)
     {
         wprintf(L"%s\n", name.c_str());
