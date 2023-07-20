@@ -111,11 +111,11 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
     name += GetClassIDName(classId);
     name += WCHAR(".");
 
-    COMPtrHolder<IMetaDataImport2> pIMDImport;
+    COMPtrHolder<IMetaDataImport2> pMDImport;
     hr = _pCorProfilerInfo->GetModuleMetaData(moduleId,
                                              ofRead,
                                              IID_IMetaDataImport2,
-                                             (IUnknown **)&pIMDImport);
+                                             (IUnknown **)&pMDImport);
     if (FAILED(hr))
     {
         wcout << L"FAIL: GetModuleMetaData call failed with hr=0x" << std::hex << hr << std::endl;
@@ -123,7 +123,7 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
     }
 
     WCHAR funcName[STRING_LENGTH];
-    hr = pIMDImport->GetMethodProps(token,
+    hr = pMDImport->GetMethodProps(token,
                                     NULL,
                                     funcName,
                                     STRING_LENGTH,
@@ -162,7 +162,7 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
     const ULONG MaxGenericParametersCount = 128;
     ULONG genericParamsCount = MaxGenericParametersCount;
     mdGenericParam genericParams[MaxGenericParametersCount];
-    hr = pIMDImport->EnumGenericParams(&hEnum, token, genericParams, MaxGenericParametersCount, &genericParamsCount);
+    hr = pMDImport->EnumGenericParams(&hEnum, token, genericParams, MaxGenericParametersCount, &genericParamsCount);
 
     name += WCHAR(" EnumGenericParams<");
     if (hr == S_OK)
@@ -174,7 +174,7 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
         {
             ULONG index;
             DWORD flags;
-            hr = pIMDImport->GetGenericParamProps(genericParams[currentParam], &index, &flags, nullptr, nullptr, paramName, paramNameLen, &paramNameLen);
+            hr = pMDImport->GetGenericParamProps(genericParams[currentParam], &index, &flags, nullptr, nullptr, paramName, paramNameLen, &paramNameLen);
             if (SUCCEEDED(hr))
             {
                 name += paramName;
@@ -186,7 +186,7 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
             }
 
         }
-        pIMDImport->CloseEnum(hEnum);
+        pMDImport->CloseEnum(hEnum);
     }
 
     name += WCHAR(">");
@@ -236,10 +236,10 @@ String CorProfiler::GetClassIDName(ClassID classId)
         return WCHAR("GetClassIDNameFailed");
     }
 
-    COMPtrHolder<IMetaDataImport> pMDImport;
+    COMPtrHolder<IMetaDataImport2> pMDImport;
     hr = _pCorProfilerInfo->GetModuleMetaData(modId,
                                              (ofRead | ofWrite),
-                                             IID_IMetaDataImport,
+                                             IID_IMetaDataImport2,
                                              (IUnknown **)&pMDImport );
     if (FAILED(hr))
     {
@@ -279,5 +279,35 @@ String CorProfiler::GetClassIDName(ClassID classId)
     if (nTypeArgs > 0)
         name += WCHAR(">");
 
+    HCORENUM hEnum = nullptr;
+    const ULONG MaxGenericParametersCount = 128;
+    ULONG genericParamsCount = MaxGenericParametersCount;
+    mdGenericParam genericParams[MaxGenericParametersCount];
+    hr = pMDImport->EnumGenericParams(&hEnum, classToken, genericParams, MaxGenericParametersCount, &genericParamsCount);
+
+    name += WCHAR(" EnumGenericParams<");
+    if (hr == S_OK)
+    {
+        WCHAR paramName[64];
+        ULONG paramNameLen = 64;
+
+        for (size_t currentParam = 0; currentParam < genericParamsCount; currentParam++)
+        {
+            ULONG index;
+            DWORD flags;
+            hr = pMDImport->GetGenericParamProps(genericParams[currentParam], &index, &flags, nullptr, nullptr, paramName, paramNameLen, &paramNameLen);
+            if (SUCCEEDED(hr))
+            {
+                name += paramName;
+            }
+            else
+            {
+                // this should never happen if the enum succeeded: no need to count the parameters
+                name += WCHAR("Failed");
+            }
+
+        }
+        pMDImport->CloseEnum(hEnum);
+    }
     return name;
 }
