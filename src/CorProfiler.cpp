@@ -161,7 +161,7 @@ String CorProfiler::GetFunctionIDName(FunctionID funcId)
     hr = pIMDImport->EnumGenericParams(&hEnum, token, genericParams, MaxGenericParametersCount, &genericParamsCount);
 
     name += WCHAR(" EnumGenericParams<");
-    if (SUCCEEDED(hr))
+    if (hr == S_OK)
     {
         WCHAR paramName[64];
         ULONG paramNameLen = 64;
