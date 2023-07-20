@@ -262,22 +262,22 @@ String CorProfiler::GetClassIDName(ClassID classId)
     }
 
     String name = wName;
-    if (nTypeArgs > 0)
-        name += WCHAR("<");
+    // if (nTypeArgs > 0)
+    //     name += WCHAR("<");
 
-    for(ULONG32 i = 0; i < nTypeArgs; i++)
-    {
+    // for(ULONG32 i = 0; i < nTypeArgs; i++)
+    // {
 
-        String typeArgClassName;
-        typeArgClassName.Clear();
-        name += GetClassIDName(typeArgs[i]);
+    //     String typeArgClassName;
+    //     typeArgClassName.Clear();
+    //     name += GetClassIDName(typeArgs[i]);
 
-        if ((i + 1) != nTypeArgs)
-            name += WCHAR(", ");
-    }
+    //     if ((i + 1) != nTypeArgs)
+    //         name += WCHAR(", ");
+    // }
 
-    if (nTypeArgs > 0)
-        name += WCHAR(">");
+    // if (nTypeArgs > 0)
+    //     name += WCHAR(">");
 
     HCORENUM hEnum = nullptr;
     const ULONG MaxGenericParametersCount = 128;
