@@ -313,5 +313,7 @@ String CorProfiler::GetClassIDName(ClassID classId)
         }
         pMDImport->CloseEnum(hEnum);
     }
+    name += WCHAR(">");
+
     return name;
 }
