@@ -68,7 +68,7 @@ HRESULT CorProfiler::JITCompilationStarted(FunctionID functionId, BOOL fIsSafeTo
     wstring name = profName.ToWString();
     if (name.find(L"GenericMethod") != wstring::npos)
     {
-        wprintf(L"%s\n", name.c_str());
+        wprintf(L"Yo %s\n", name.c_str());
     }
 
     return S_OK;
