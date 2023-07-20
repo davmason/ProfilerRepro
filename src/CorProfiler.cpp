@@ -69,7 +69,7 @@ HRESULT CorProfiler::JITCompilationStarted(FunctionID functionId, BOOL fIsSafeTo
     wstring name = profName.ToWString();
     if (name.find(L"GenericMethod") != wstring::npos)
     {
-        wcout << name << std::endl;
+        wcout << L"    Profiler saw " << name << std::endl;
     }
 
     return S_OK;
