@@ -14,4 +14,4 @@ if [ -f "runtime/corerun.exe" ]; then
     exit 1
 fi
 
-runtime/corerun multithreadedapp.dll
+runtime/corerun sampleapp.dll
