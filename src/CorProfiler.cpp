@@ -37,7 +37,7 @@ CorProfiler::~CorProfiler()
 
 HRESULT STDMETHODCALLTYPE CorProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 {
-    printf("%s\n", __FUNCTION__);
+    printf("CorProfiler::Initialize\n");
 
     HRESULT hr = S_OK;
     if (FAILED(hr = pICorProfilerInfoUnk->QueryInterface(__uuidof(ICorProfilerInfo12), (void **)&_pCorProfilerInfo)))
