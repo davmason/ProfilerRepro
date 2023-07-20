@@ -32,7 +32,7 @@ CorProfiler::CorProfiler() :
     _pCorProfilerInfo(),
     _refCount(0)
 {
-
+    s_instance = this;
 }
 
 CorProfiler::~CorProfiler()
