@@ -299,6 +299,10 @@ String CorProfiler::GetClassIDName(ClassID classId)
             if (SUCCEEDED(hr))
             {
                 name += paramName;
+                if (currentParam < genericParamsCount - 1)
+                {
+                    name += ",";
+                }
             }
             else
             {
