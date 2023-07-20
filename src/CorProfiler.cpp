@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <cstdlib>
 #include <ctime>
+#include <locale.h>
 
 using std::shared_ptr;
 using std::vector;
@@ -23,7 +24,7 @@ CorProfiler::CorProfiler() :
     _pCorProfilerInfo(),
     _refCount(0)
 {
-
+    setlocale(LC_ALL, "");
 }
 
 CorProfiler::~CorProfiler()
