@@ -268,6 +268,8 @@ public:
             temp.push_back(CAST_CHAR(buffer[i]));
         }
 
+        temp.push_back(0);
+
         return temp;
     }
 
